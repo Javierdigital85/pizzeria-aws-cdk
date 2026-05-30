@@ -4,28 +4,7 @@ A serverless pizza-ordering backend built with the [AWS CDK](https://docs.aws.am
 
 ## Architecture
 
-```
-                 POST /orders                       ┌──────────────────────┐
-   Client ───────────────────────►  API Gateway ───►│   newOrderFunction   │
-      │           GET  /orders/{id}       │         └──────────┬───────────┘
-      │                                   │                     │ save order
-      │                                   │            ┌────────▼─────────┐
-      │                                   └───────────►│   OrdersTable    │
-      │                                    getOrder    │   (DynamoDB)     │
-      │                                                └────┬────────┬────┘
-      │                                                     │        │ stream (MODIFY)
-      │                              send to queue          │        ▼
-      │                          ┌────────────────┐         │   ┌──────────────────┐
-      └──────────────────────────┤ PendingOrders  │◄────────┘   │ sendOrderFunction│
-                                 │     Queue      │             └────────┬─────────┘
-                                 └───────┬────────┘                      │
-                                         │ triggers                      ▼
-                                 ┌───────▼────────┐            ┌──────────────────┐
-                                 │ prepOrderFunc  │           │  OrdersToSend    │
-                                 │ (status →      │           │      Queue       │
-                                 │   COMPLETED)   │           └──────────────────┘
-                                 └────────────────┘
-```
+![Arquitectura](assets/architecture.png)
 
 ### Order flow
 
